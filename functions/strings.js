@@ -2,6 +2,50 @@
 
 class Strings {
 
+	static rulesFaq (contextStr) {
+		return 'I\'m thinking of a grid of objects. You should guess one ' +
+			'letter-number coordinate at a time like \'B 1\' or \'C 3\' to flip ' +
+			'a card. Every 2 guesses, if the cards are the same, they\'re ' +
+			'matched. Your goal is to match all of the cards in as few ' +
+			'guesses as possible. There are special guesses like lucky ' +
+			'guesses, perfect guesses or missed guesses. Just ask to hear ' +
+			'more about them! Or if you\'d like to continue, please '
+			+ contextStr;
+	}
+
+	static luckyFaq(contextStr) {
+		return 'A lucky guess is when two cards you have never flipped ' +
+			'before match. You can also ask about perfect or missed ' +
+			'guesses, or to continue, please ' + contextStr;
+	}
+
+	static perfectFaq(contextStr) {
+		return 'A perfect match is when you can match a first card to it\'s ' +
+			'matching card you\'ve seen before, before incorrectly guessing ' +
+			'it\'s match as some other card. You can also ask about lucky ' +
+			'or missed guesses, or to continue, please ' + contextStr;
+	}
+
+	static missedFaq(contextStr) {
+		return 'An incorrect or missed guess is one where you had enough ' +
+			'information to correctly match a first flipped card, but the ' +
+			'second guessed card was incorrect You can also ask about lucky ' +
+			'or perfect guesses, or to continue, please ' + contextStr;
+	}
+
+	static levelSelectContextSegment () {
+		return 'select a level between 1 and 10'
+	}
+
+	static levelConfirmContextSegment(level, rows, cols) {
+		return 'confirm whether level ' + level + ', a ' + rows + ' by ' +
+			cols + ' board, is ok.'
+	}
+
+	static guessContextSegment() {
+		return 'make a guess';
+	}
+
 	static levelSelect (level, rows, cols) {
 		return 'You selected level ' + level + '. This is a ' + rows + ' by ' +
 		  	cols + ' board. Is that ok?';
@@ -90,6 +134,10 @@ class Strings {
 
 	static endingGreatJob() {
 		return 'Great job!';
+	}
+
+	static playAgain() {
+		return 'Would you like to play again?';
 	}
 }
 

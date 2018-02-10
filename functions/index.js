@@ -10,11 +10,23 @@ const Strings = require('./strings.js');
 const Actions = {
   CARDS_LEFT: 'num_cards_left',
   CONFIRM_LEVEL: 'confirm_level',
+  FAQ_LUCKY: 'faq_lucky',
+  FAQ_MISSED: 'faq_missed',
+  FAQ_PERFECT: 'faq_perfect',
+  FAQ_RULES: 'faq_rules',
   GUESS: 'guess',
   LEVEL_SELECT: 'level_select',
   LIST_UNMATCHED: 'list_unmatched',
   PAIRS_LEFT: 'num_pairs_left',
 };
+
+const Contexts = {
+  LEVEL_SELECT: 'level-select',
+  CONFIRM_LEVEL: 'level-select-followup',
+  GAME: 'game',
+  PLAY_AGAIN_YES: 'play-again-yes',
+  PLAY_AGAIN_NO: 'play-again-no',
+}
 
 // Params to parse from Intents
 const Params = {
@@ -25,6 +37,7 @@ const Params = {
 
 // Game difficulty levels available and corresponding board size.
 const Levels = {
+  0: [2, 2],
   1: [2, 4], // 8, 4 pairs
   2: [3, 4], // 12, 6 pairs
   3: [4, 4], // 16, 8 pairs
@@ -79,11 +92,12 @@ class Memory {
 
   // Intent Handlers
   [Actions.LEVEL_SELECT] () {
-    let level = Number(this.app.getArgument(Params.LEVEL));
-    this.data.numRows = Levels[level][0];
-    this.data.numCols = Levels[level][1];
+    this.data.level = Number(this.app.getArgument(Params.LEVEL));
+    this.data.numRows = Levels[this.data.level][0];
+    this.data.numCols = Levels[this.data.level][1];
     this.app.ask(
-        Strings.levelSelect(level, this.data.numRows, this.data.numCols));
+        Strings.levelSelect(
+            this.data.level, this.data.numRows, this.data.numCols));
   }
 
   [Actions.PAIRS_LEFT] () {
@@ -241,7 +255,9 @@ class Memory {
         } else {
           phrase += Strings.endingGreatJob();
         }
-        this.app.tell(phrase);
+        this.app.setContext(Contexts.PLAY_AGAIN_NO);
+        this.app.setContext(Contexts.PLAY_AGAIN_YES);
+        this.app.ask(phrase + " " + Strings.playAgain());
         return;
       }
 
@@ -278,6 +294,22 @@ class Memory {
     }
   }
 
+  [Actions.FAQ_RULES] () {
+    this.app.ask(this.faqContext(Strings.rulesFaq));
+  }
+
+  [Actions.FAQ_LUCKY] () {
+    this.app.ask(this.faqContext(Strings.luckyFaq));
+  }
+
+  [Actions.FAQ_PERFECT] () {
+    this.app.ask(this.faqContext(Strings.perfectFaq));
+  }
+
+  [Actions.FAQ_MISSED] () {
+    this.app.ask(this.faqContext(Strings.missedFaq));
+  }
+
   /** 
    * Expression for determining whether a guess is already known or not
    * and if the known objects list should be updated.
@@ -285,7 +317,7 @@ class Memory {
    * A guess is considered a known if:
    *     1)  The item already exists in the list of known information
    *     2a) Either both coordinates for the object have been found 
-                 OR
+   *             OR
    *     2b) The guessed coordinate is not the original coordinate the item was
    *         found on.
    */
@@ -295,6 +327,22 @@ class Memory {
         (map[item].both || (
             (map[item].row != row || 
              map[item].col != col)));
+  }
+
+  faqContext(faqStrFn) {
+    let contexts = this.app.getContexts();
+    let segment;
+    if ((contexts.filter((c) => c.name === Contexts.GAME)).length == 1) {
+      segment = Strings.guessContextSegment();
+    } else if (
+        (contexts.filter(
+            (c) => c.name === Contexts.CONFIRM_LEVEL)).length == 1) {
+      segment = Strings.levelConfirmContextSegment(
+        this.data.level, this.data.numRows, this.data.numCols);
+    } else {
+      segment = Strings.levelSelectContextSegment();
+    }
+    return faqStrFn(segment);
   }
 
 
@@ -343,24 +391,6 @@ class Memory {
    */
   intToLetter (number) {
     return String.fromCharCode(97 + number).toUpperCase();
-  }
-}
-
-class ObjMap {
-  constructor() {
-    this.map = {}
-  }
-
-  has(key) {
-    return key in this.map;
-  }
-
-  set(key, item) {
-    this.map[key] = item;
-  }
-
-  get(key) {
-    return this.map[key]
   }
 }
 

@@ -58,6 +58,64 @@ const fakeDialogflowBodyRequestId = '1a2b3c4d-5e6f-7g8h-9i10-11j12k13l14m15n16o'
 const fakeUserId = 'user123';
 const fakeConversationId = '0123456789';
 
+function blankRequest(contexts) {
+  return {
+    'lang': 'en',
+    'status': {
+      'errorType': 'success',
+      'code': 200
+    },
+    'timestamp': fakeTimeStamp,
+    'sessionId': fakeSessionId,
+    'result': {
+      'parameters': {},
+      'contexts': [],
+      'resolvedQuery': '',
+      'source': 'agent',
+      'score': 1.0,
+      'speech': '',
+      'fulfillment': {
+        'messages': [
+          {
+            'speech': '',
+            'type': 0
+          }
+        ],
+        'speech': ''
+      },
+      'actionIncomplete': false,
+      'action': 'greetings',
+      'metadata': {
+        'intentId': fakeIntentId,
+        'webhookForSlotFillingUsed': 'false',
+        'intentName': 'greetings',
+        'webhookUsed': 'true'
+      }
+    },
+    'id': fakeDialogflowBodyRequestId,
+    'originalRequest': {
+      'source': 'google',
+      'data': {
+        'inputs': [
+          {
+            'raw_inputs': [],
+            'intent': 'actions.intent.TEXT',
+            'arguments': []
+          }
+        ],
+        'user': {
+          'user_id': fakeUserId,
+          'locale': 'en-US'
+        },
+        'conversation': {
+          'conversation_id': fakeConversationId,
+          'type': 'ACTIVE',
+        }
+      }
+    }
+  };
+}
+
 function selectLevelRequest(level) {
   let levelText = level.toString();
   return {
@@ -215,6 +273,7 @@ function guessRequest(row, col) {
 const clone = obj => JSON.parse(JSON.stringify(obj));
 
 module.exports = {
+  blankRequest,
   selectLevelRequest,
   guessRequest,
   MockRequest,

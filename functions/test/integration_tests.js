@@ -6,6 +6,7 @@ const {
   States
 } = require('../index');
 const {
+  blankRequest,
   guessRequest,
   selectLevelRequest,
   headerV1,
@@ -101,6 +102,10 @@ suite( 'Integration Tests', function() {
     assert.equal('A1 is a dog. That\'s a match!',
        mockResponse.body.speech.trim());
 
+    // Ask unmatched coordinates
+    askUnmatched();
+    assert.equal('A2, B2', mockResponse.body.speech.trim());
+
     // Guess 4
     performGuess('a', '2');
     assert.equal('A2 is a cat.', mockResponse.body.speech.trim());
@@ -120,4 +125,13 @@ function performGuess(r, c) {
   let response = mockResponse;
   board.app = new DialogflowApp( {request, response} )
   board[Actions.GUESS]();
+}
+
+function askUnmatched() {
+  var req = clone(blankRequest());
+  var mockRequest = new MockRequest(headerV1, req);
+  let request = mockRequest;
+  let response = mockResponse;
+  board.app = new DialogflowApp( {request, response} )
+  board[Actions.LIST_UNMATCHED]();
 }

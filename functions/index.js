@@ -114,7 +114,7 @@ class Memory {
     let numPairs = this.data.numRows * this.data.numCols / 2
     let pairLimit = Math.ceil(numPairs * limit)
     if (this.data.pairsLeft > pairLimit) {
-      this.app.tell(Strings.tooManyUnmatched(pairLimit));
+      this.app.ask(Strings.tooManyUnmatched(pairLimit));
       return;
     }
     var unmatched = [];
@@ -125,7 +125,7 @@ class Memory {
         }
       }
     }
-    this.app.tell(unmatched.join(', '));
+    this.app.ask(unmatched.join(', '));
   }
 
   [Actions.CONFIRM_LEVEL] () {

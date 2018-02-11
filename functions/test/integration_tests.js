@@ -46,7 +46,7 @@ suite( 'Integration Tests', function() {
     performGuess('b', '2');
     assert.equal(
       'B2 is a cat. That\'s all of them! You won in 2 guesses. 1 of those ' +
-          'were lucky. Great job!',
+          'were lucky. Great job! Would you like to play again?',
        mockResponse.body.speech.trim());
   })
 
@@ -73,7 +73,8 @@ suite( 'Integration Tests', function() {
 
     performGuess('a', '2');
     assert.equal('A2 is a cat. Good memory! That\'s all of them! You won in ' +
-        '3 guesses. 2 of those were perfect recall. Great job!',
+        '3 guesses. 2 of those were perfect recall. Great job! Would you ' +
+        'like to play again?',
         mockResponse.body.speech.trim());
   })
 
@@ -107,7 +108,7 @@ suite( 'Integration Tests', function() {
     performGuess('b', '2');
     assert.equal('B2 is a cat. Good memory! That\'s all of them! You won ' +
       'in 4 guesses. 1 of those were perfect recall. There was 1 incorrect '  +
-      'guess that could have been correct.',
+      'guess that could have been correct. Would you like to play again?',
       mockResponse.body.speech.trim());
   })
 })
@@ -119,20 +120,4 @@ function performGuess(r, c) {
   let response = mockResponse;
   board.app = new DialogflowApp( {request, response} )
   board[Actions.GUESS]();
-}
-
-function getMetaboardState(board, row, col) {
-  let r;
-  let c;
-  if (typeof(row) === "string") {
-    r = board.letterToInt(row);
-  } else {
-    r = row;
-  }
-  if (typeof(col) === "string") {
-    c = parseInt(col)-1
-  } else {
-    c = col;
-  }
-  return board.data.metaboard[r][c];
 }

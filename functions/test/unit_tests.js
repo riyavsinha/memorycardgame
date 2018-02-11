@@ -23,6 +23,11 @@ setup(function() {
 
 suite( 'UnitTests', function () {
 
+  // suite('#' + Actions.FAQ_RULES, function () {
+
+  //   test('')
+  // })
+
   suite('#' + Actions.LEVEL_SELECT, function () {
 
     test('Sets correct number of rows and columns for level 2', function() {
@@ -844,7 +849,7 @@ suite( 'UnitTests', function () {
 
         // Dialog assertions
         assert.equal('A1 is a a. That\'s all of them! You won in 1 guesses.' +
-            ' Great job!',
+            ' Great job! Would you like to play again?',
           mockResponse.body.speech.trim());
       })      
     
@@ -871,7 +876,7 @@ suite( 'UnitTests', function () {
 
         // Dialog assertions
         assert.equal('A1 is a a. That\'s all of them! You won in 1 guesses. 1' +
-             ' of those were lucky. Great job!',
+             ' of those were lucky. Great job! Would you like to play again?',
           mockResponse.body.speech.trim());
       })
 
@@ -897,8 +902,9 @@ suite( 'UnitTests', function () {
         board[Actions.GUESS]();
 
         // Dialog assertions
-        assert.equal('A1 is a a. That\'s all of them! You won in 1 guesses. 1' +
-             ' of those were perfect recall. Great job!',
+        assert.equal('A1 is a a. That\'s all of them! You won in 1 guesses. ' +
+             '1 of those were perfect recall. Great job! Would you like to ' +
+             'play again?',
           mockResponse.body.speech.trim());
       })
 
@@ -927,7 +933,7 @@ suite( 'UnitTests', function () {
         // Dialog assertions
         assert.equal('A1 is a a. That\'s all of them! You won in 1 guesses.' +
               ' 1 of those were lucky. 1 of those were perfect recall. Great' +
-              ' job!',
+              ' job! Would you like to play again?',
           mockResponse.body.speech.trim());
       })
 
@@ -952,7 +958,7 @@ suite( 'UnitTests', function () {
 
         // Dialog assertions
         assert.equal('A1 is a a. That\'s all of them! You won in 1 guesses.' +
-            ' Great job!',
+            ' Great job! Would you like to play again?',
           mockResponse.body.speech.trim());
       })
 
@@ -978,7 +984,7 @@ suite( 'UnitTests', function () {
 
         // Dialog assertions
         assert.equal('A1 is a a. That\'s all of them! You won in 1 guesses. '+
-              '1 of those were lucky. Great job!',
+              '1 of those were lucky. Great job! Would you like to play again?',
           mockResponse.body.speech.trim());
       })
 
@@ -1019,8 +1025,9 @@ suite( 'UnitTests', function () {
         assert.equal(board.data.numPerfect, 1);
 
         // Dialog assertions
-        assert.equal('A1 is a a. Good memory! That\'s all of them! You won' +
-          ' in 1 guesses. 1 of those were perfect recall. Great job!',
+        assert.equal('A1 is a a. Good memory! That\'s all of them! You won ' +
+          'in 1 guesses. 1 of those were perfect recall. Great job! ' +
+          'Would you like to play again?',
           mockResponse.body.speech.trim());
       })
 

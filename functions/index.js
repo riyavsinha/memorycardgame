@@ -90,7 +90,10 @@ class Memory {
     map[action]();
   }
 
+  /////////////////////////////////////////////////
   // Intent Handlers
+  /////////////////////////////////////////////////
+
   [Actions.LEVEL_SELECT] () {
     this.data.level = Number(this.app.getArgument(Params.LEVEL));
     this.data.numRows = Levels[this.data.level][0];
@@ -310,16 +313,23 @@ class Memory {
     this.app.ask(this.faqContext(Strings.missedFaq));
   }
 
+  /////////////////////////////////////////////////
+  // Util Methods
+  /////////////////////////////////////////////////
+
   /** 
    * Expression for determining whether a guess is already known or not
    * and if the known objects list should be updated.
    *
-   * A guess is considered a known if:
+   * A guess is considered to have known information if:
    *     1)  The item already exists in the list of known information
    *     2a) Either both coordinates for the object have been found 
    *             OR
    *     2b) The guessed coordinate is not the original coordinate the item was
-   *         found on.
+   *         found on. 
+   * @param {!String} item The item to see if information is known about
+   * @param {!Number} row The row number the item was just flipped at
+   * @param {!Number} col The col number the item was just flipped at
    */
   isKnown(item, row, col) {
     let map = this.data.knownObjs;
@@ -329,20 +339,32 @@ class Memory {
              map[item].col != col)));
   }
 
+  /**
+   * Takes in a FAQ help string function requiring a current context parameter
+   * and calls it with the most relevant context string.
+   * @private
+   * @param {!Function} faqStrFn The help string function
+   */
   faqContext(faqStrFn) {
-    let contexts = this.app.getContexts();
     let segment;
-    if ((contexts.filter((c) => c.name === Contexts.GAME)).length == 1) {
+    if (this.hasContext(Contexts.GAME)) {
       segment = Strings.guessContextSegment();
-    } else if (
-        (contexts.filter(
-            (c) => c.name === Contexts.CONFIRM_LEVEL)).length == 1) {
+    } else if (this.hasContext(Contexts.CONFIRM_LEVEL)) {
       segment = Strings.levelConfirmContextSegment(
         this.data.level, this.data.numRows, this.data.numCols);
     } else {
       segment = Strings.levelSelectContextSegment();
     }
     return faqStrFn(segment);
+  }
+
+  /**
+   * Returns whether a given context exists in the current transaction.
+   * @param {!String} context The context to check for
+   */
+  hasContext(context) {
+    let contexts = this.app.getContexts();
+    return contexts.filter((c) => c.name === context).length == 1;
   }
 
 
@@ -401,3 +423,4 @@ exports.memory = functions.https.onRequest(
 exports.Memory = Memory;
 exports.Actions = Actions;
 exports.States = States;
+exports.Contexts = Contexts;

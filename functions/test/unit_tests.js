@@ -1080,51 +1080,6 @@ suite( 'UnitTests', function () {
 
   })
 
-	suite('#OutOfBounds', function () {
-
-    setup(function() {
-      board.data.numRows = 4;
-      board.data.numCols = 3;
-    })
-
-		test('Row too low', function() {
-      assert.ok(board.isOutOfBounds(-1, 2));
-	  })
-
-    test('Row too high', function() {
-      assert.ok(board.isOutOfBounds(4, 2));
-    })
-
-    test('Col too low', function() {
-      assert.ok(board.isOutOfBounds(2, -1));
-    })
-
-    test('Col too high', function() {
-      assert.ok(board.isOutOfBounds(2, 3));
-    })
-
-	})
-
-  suite('#LetterToInt', function () {
-
-    test('A to 0', function() {
-      assert.equal(board.letterToInt('A'), 0);
-    })
-
-    test('a to 0', function() {
-      assert.equal(board.letterToInt('a'), 0);
-    })
-
-  })
-
-  suite('#intToLetter', function () {
-
-    test('0 to A', function() {
-      assert.equal('A', board.intToLetter(0));
-    })
-
-  })
-
 })
 
 function setupBoard(b) {

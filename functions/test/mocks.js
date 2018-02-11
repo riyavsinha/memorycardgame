@@ -1,6 +1,12 @@
 
 'use strict';
 
+const Requests = {
+  GUESS: 'guess',
+  LEVEL: 'level',
+  CONTEXT: 'context',
+}
+
 class MockRequest {
   constructor (headers, body) {
     if (headers) {
@@ -59,67 +65,58 @@ const fakeUserId = 'user123';
 const fakeConversationId = '0123456789';
 
 function blankRequest() {
-  return {
-    'lang': 'en',
-    'status': {
-      'errorType': 'success',
-      'code': 200
-    },
-    'timestamp': fakeTimeStamp,
-    'sessionId': fakeSessionId,
-    'result': {
-      'parameters': {},
-      'contexts': [],
-      'resolvedQuery': '',
-      'source': 'agent',
-      'score': 1.0,
-      'speech': '',
-      'fulfillment': {
-        'messages': [
-          {
-            'speech': '',
-            'type': 0
-          }
-        ],
-        'speech': ''
-      },
-      'actionIncomplete': false,
-      'action': 'greetings',
-      'metadata': {
-        'intentId': fakeIntentId,
-        'webhookForSlotFillingUsed': 'false',
-        'intentName': 'greetings',
-        'webhookUsed': 'true'
-      }
-    },
-    'id': fakeDialogflowBodyRequestId,
-    'originalRequest': {
-      'source': 'google',
-      'data': {
-        'inputs': [
-          {
-            'raw_inputs': [],
-            'intent': 'actions.intent.TEXT',
-            'arguments': []
-          }
-        ],
-        'user': {
-          'user_id': fakeUserId,
-          'locale': 'en-US'
-        },
-        'conversation': {
-          'conversation_id': fakeConversationId,
-          'type': 'ACTIVE',
-        }
-      }
-    }
-  };
+  return makeRequest();
 }
 
 function contextualRequest(contexts) {
-  let reqContexts = [];
-  for (var i in contexts) {
-    reqContexts.push({"name": contexts[i], "lifespan": 1, "parameters": {}});
+  return makeRequest(Requests.CONTEXT, contexts);
+}
+
+function selectLevelRequest(level) {
+  let levelText = level.toString();
+  return makeRequest(Requests.LEVEL, levelText);
+}
+
+function guessRequest(row, col) {
+  return makeRequest(Requests.GUESS, [row, col]);
+}
+
+function makeRequest(type=null, data=[]) {
+  let contexts = []
+  let params = {};
+  let raw_inputs = [];
+  let args = [];
+
+  switch (type) {
+    case Requests.GUESS:
+      let row = data[0];
+      let col = data[1];
+      params = {'row': row, 'col': col}
+      raw_inputs = 
+          [
+            {'query': row, 'input_type': 'VOICE'},
+            {'query': col, 'input_type': 'VOICE'},
+          ];
+      args = 
+          [
+            {'text_value': row, 'raw_text': row, 'name': 'text'},
+            {'text_value': col, 'raw_text': col, 'name': 'text'},
+          ];
+      break;
+    case Requests.LEVEL:
+      let level = data;
+      params = {'level': level};
+      raw_inputs = [{'query': level, 'input_type': 'VOICE'}];
+      args = [{'text_value': level, 'raw_text': level, 'name': 'text'}];
+      break;
+    case Requests.CONTEXT:
+      for (var i in data) {
+        contexts.push(
+            {"name": data[i], "lifespan": 1, "parameters": {}});
+      }
+      break;
+    default:
+
   }
   return {
     'lang': 'en',
@@ -130,8 +127,8 @@ function contextualRequest(contexts) {
     'timestamp': fakeTimeStamp,
     'sessionId': fakeSessionId,
     'result': {
-      'parameters': {},
-      'contexts': reqContexts,
+      'parameters': params,
+      'contexts': contexts,
       'resolvedQuery': '',
       'source': 'agent',
       'score': 1.0,
@@ -160,162 +157,9 @@ function contextualRequest(contexts) {
       'data': {
         'inputs': [
           {
-            'raw_inputs': [],
+            'raw_inputs': raw_inputs,
             'intent': 'actions.intent.TEXT',
-            'arguments': []
-          }
-        ],
-        'user': {
-          'user_id': fakeUserId,
-          'locale': 'en-US'
-        },
-        'conversation': {
-          'conversation_id': fakeConversationId,
-          'type': 'ACTIVE',
-        }
-      }
-    }
-  };
-}
-
-function selectLevelRequest(level) {
-  let levelText = level.toString();
-  return {
-    'lang': 'en',
-    'status': {
-      'errorType': 'success',
-      'code': 200
-    },
-    'timestamp': fakeTimeStamp,
-    'sessionId': fakeSessionId,
-    'result': {
-      'parameters': {
-        'level': levelText,
-      },
-      'contexts': [],
-      'resolvedQuery': '',
-      'source': 'agent',
-      'score': 1.0,
-      'speech': '',
-      'fulfillment': {
-        'messages': [
-          {
-            'speech': '',
-            'type': 0
-          }
-        ],
-        'speech': ''
-      },
-      'actionIncomplete': false,
-      'action': 'greetings',
-      'metadata': {
-        'intentId': fakeIntentId,
-        'webhookForSlotFillingUsed': 'false',
-        'intentName': 'greetings',
-        'webhookUsed': 'true'
-      }
-    },
-    'id': fakeDialogflowBodyRequestId,
-    'originalRequest': {
-      'source': 'google',
-      'data': {
-        'inputs': [
-          {
-            'raw_inputs': [
-              {
-                'query': levelText,
-                'input_type': 'VOICE'
-              }
-            ],
-            'intent': 'actions.intent.TEXT',
-            'arguments': [
-              {
-                'text_value': levelText,
-                'raw_text': levelText,
-                'name': 'text'
-              }
-            ]
-          }
-        ],
-        'user': {
-          'user_id': fakeUserId,
-          'locale': 'en-US'
-        },
-        'conversation': {
-          'conversation_id': fakeConversationId,
-          'type': 'ACTIVE',
-        }
-      }
-    }
-  };
-}
-
-function guessRequest(row, col) {
-  return {
-    'lang': 'en',
-    'status': {
-      'errorType': 'success',
-      'code': 200
-    },
-    'timestamp': fakeTimeStamp,
-    'sessionId': fakeSessionId,
-    'result': {
-      'parameters': {
-        'row': row,
-        'col': col,
-      },
-      'contexts': [],
-      'resolvedQuery': '',
-      'source': 'agent',
-      'score': 1.0,
-      'speech': '',
-      'fulfillment': {
-        'messages': [
-          {
-            'speech': '',
-            'type': 0
-          }
-        ],
-        'speech': ''
-      },
-      'actionIncomplete': false,
-      'action': 'greetings',
-      'metadata': {
-        'intentId': fakeIntentId,
-        'webhookForSlotFillingUsed': 'false',
-        'intentName': 'greetings',
-        'webhookUsed': 'true'
-      }
-    },
-    'id': fakeDialogflowBodyRequestId,
-    'originalRequest': {
-      'source': 'google',
-      'data': {
-        'inputs': [
-          {
-            'raw_inputs': [
-              {
-                'query': row,
-                'input_type': 'VOICE'
-              },
-              {
-                'query': col,
-                'input_type': 'VOICE'
-              }
-            ],
-            'intent': 'actions.intent.TEXT',
-            'arguments': [
-              {
-                'text_value': row,
-                'raw_text': row,
-                'name': 'text'
-              },
-              {
-                'text_value': col,
-                'raw_text': col,
-                'name': 'text'
-              },
-            ]
+            'arguments': args
           }
         ],
         'user': {

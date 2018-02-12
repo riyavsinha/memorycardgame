@@ -9,7 +9,8 @@ const Strings = require('./strings.js');
 // Actions in DialogFlow Intents
 const Actions = {
   CARDS_LEFT: 'num_cards_left',
-  CONFIRM_LEVEL: 'confirm_level',
+  CONFIRM_LEVEL: 'level_confirm',
+  FAQ_GENERAL_FB: 'faq_general_fallback',
   FAQ_LUCKY: 'faq_lucky',
   FAQ_MISSED: 'faq_missed',
   FAQ_PERFECT: 'faq_perfect',
@@ -18,14 +19,18 @@ const Actions = {
   LEVEL_SELECT: 'level_select',
   LIST_UNMATCHED: 'list_unmatched',
   PAIRS_LEFT: 'num_pairs_left',
+  WELCOME: 'input.welcome',
 };
 
 const Contexts = {
   LEVEL_SELECT: 'level-select',
-  CONFIRM_LEVEL: 'level-select-followup',
+  CONFIRM_LEVEL: 'level-confirm',
   GAME: 'game',
   PLAY_AGAIN_YES: 'play-again-yes',
   PLAY_AGAIN_NO: 'play-again-no',
+  RESTART_YES: 'restart-yes',
+  RESTART_NO: 'restart-no',
+  RESTART_FB: 'restart-fb',
 }
 
 // Params to parse from Intents
@@ -93,6 +98,19 @@ class Memory {
   /////////////////////////////////////////////////
   // Intent Handlers
   /////////////////////////////////////////////////
+
+  [Actions.WELCOME] () {
+    if (this.hasContext(Contexts.GAME)) {
+      this.app.setContext(Contexts.RESTART_YES);
+      this.app.setContext(Contexts.RESTART_NO);
+      this.app.setContext(Contexts.RESTART_FB);
+      this.app.ask(Strings.askRestart());
+    } else if (this.hasContext(Contexts.CONFIRM_LEVEL)) {
+      this.app.ask(Strings.askLevel());
+    } else {
+      this.app.ask(Strings.welcome());
+    }
+  }
 
   [Actions.LEVEL_SELECT] () {
     this.data.level = Number(this.app.getArgument(Params.LEVEL));
@@ -313,6 +331,10 @@ class Memory {
     this.app.ask(this.faqContext(Strings.missedFaq));
   }
 
+  [Actions.FAQ_GENERAL_FB] () {
+    this.app.ask(this.faqContext(Strings.generalFaqFallback))
+  }
+
   /////////////////////////////////////////////////
   // Util Methods
   /////////////////////////////////////////////////
@@ -327,9 +349,11 @@ class Memory {
    *             OR
    *     2b) The guessed coordinate is not the original coordinate the item was
    *         found on. 
+   *
    * @param {!String} item The item to see if information is known about
    * @param {!Number} row The row number the item was just flipped at
    * @param {!Number} col The col number the item was just flipped at
+   * @private
    */
   isKnown(item, row, col) {
     let map = this.data.knownObjs;
@@ -342,6 +366,7 @@ class Memory {
   /**
    * Takes in a FAQ help string function requiring a current context parameter
    * and calls it with the most relevant context string.
+
    * @private
    * @param {!Function} faqStrFn The help string function
    */
@@ -360,7 +385,9 @@ class Memory {
 
   /**
    * Returns whether a given context exists in the current transaction.
+   *
    * @param {!String} context The context to check for
+   * @private
    */
   hasContext(context) {
     let contexts = this.app.getContexts();
@@ -391,6 +418,8 @@ class Memory {
   }
 
   /**
+   * Checks whether a coordinate is out of bounds of the board.
+   *
    * @return {boolean} Whether a coordinate is out of bounds
    * @private
    */
@@ -400,6 +429,8 @@ class Memory {
   }
 
   /**
+   * Converts a user-input row letter to the corresponding array row index.
+   *
    * @return {integer}
    * @private
    */
@@ -408,7 +439,11 @@ class Memory {
   }
 
   /**
-   * @return {String}
+   * Converts a number array coordinate to the printable corresponding letter
+   * row.
+   * 
+   * @param {!Number} the array index to convert. 
+   * @return {String} the printable 
    * @private
    */
   intToLetter (number) {

@@ -2,12 +2,27 @@
 
 class Strings {
 
+	static welcome () {
+		return 'Ok, let\'s play a memory matching game! What level would you ' +
+			'like to play? If you\'d like to hear the rules, just say ' +
+			'\'rules\'!';
+	}
+
+	static askRestart () {
+		return 'You\'re already in the middle of a game. Are you sure ' +
+			'you\'d like to restart? The current game will be lost.';
+	}
+
+	static askLevel () {
+		return 'Ok, select a level between 1 and 10 to get started!';
+	}
+
 	static rulesFaq (contextStr) {
 		return 'I\'m thinking of a grid of objects. You should guess one ' +
-			'letter-number coordinate at a time like \'B 1\' or \'C 3\' to flip ' +
-			'a card. Every 2 guesses, if the cards are the same, they\'re ' +
-			'matched. Your goal is to match all of the cards in as few ' +
-			'guesses as possible. There are special guesses like lucky ' +
+			'letter-number coordinate at a time like \'B 1\' or \'C 3\' to ' +
+			'flip a card. Every 2 guesses, if the cards are the same, ' +
+			'they\'re matched. Your goal is to match all of the cards in as ' +
+			'few guesses as possible. There are special guesses like lucky ' +
 			'guesses, perfect guesses or missed guesses. Just ask to hear ' +
 			'more about them! Or if you\'d like to continue, please '
 			+ contextStr;
@@ -31,6 +46,11 @@ class Strings {
 			'information to correctly match a first flipped card, but the ' +
 			'second guessed card was incorrect You can also ask about lucky ' +
 			'or perfect guesses, or to continue, please ' + contextStr;
+	}
+
+	static generalFaqFallback(contextStr) {
+		return 'Sorry, I can only tell you more about lucky, perfect or ' +
+			'missed guesses, or to continue the game ' + contextStr;
 	}
 
 	static levelSelectContextSegment () {

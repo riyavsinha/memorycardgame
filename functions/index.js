@@ -24,10 +24,13 @@ const Actions = {
 
 const Contexts = {
   LEVEL_SELECT: 'level-select',
+  LEVEL_SELECT_FB: 'level-select-fb',
   CONFIRM_LEVEL: 'level-confirm',
   GAME: 'game',
+  GAME_FB: 'game-fb',
   PLAY_AGAIN_YES: 'play-again-yes',
   PLAY_AGAIN_NO: 'play-again-no',
+  PLAY_AGAIN_FB: 'play-again-fb',
   RESTART_YES: 'restart-yes',
   RESTART_NO: 'restart-no',
   RESTART_FB: 'restart-fb',
@@ -104,9 +107,12 @@ class Memory {
       this.app.setContext(Contexts.RESTART_YES);
       this.app.setContext(Contexts.RESTART_NO);
       this.app.setContext(Contexts.RESTART_FB);
+      this.app.setContext(Contexts.LEVEL_SELECT, 0);
+      this.app.setContext(Contexts.LEVEL_SELECT_FB, 0)
       this.app.ask(Strings.askRestart());
     } else if (this.hasContext(Contexts.CONFIRM_LEVEL)) {
-      this.app.ask(Strings.askLevel());
+      this.app.ask(Strings.askLevel(
+          this.data.level, this.data.numRows, this.data.numCols));
     } else {
       this.app.ask(Strings.welcome());
     }
@@ -278,6 +284,9 @@ class Memory {
         }
         this.app.setContext(Contexts.PLAY_AGAIN_NO);
         this.app.setContext(Contexts.PLAY_AGAIN_YES);
+        this.app.setContext(Contexts.PLAY_AGAIN_FB, 3);
+        this.app.setContext(Contexts.GAME, 0);
+        this.app.setContext(Contexts.GAME_FB, 0);
         this.app.ask(phrase + " " + Strings.playAgain());
         return;
       }

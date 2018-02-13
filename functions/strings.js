@@ -13,8 +13,10 @@ class Strings {
 			'you\'d like to restart? The current game will be lost.';
 	}
 
-	static askLevel () {
-		return 'Ok, select a level between 1 and 10 to get started!';
+	static askLevel (level, rows, cols) {
+		return 'Ok, select a level between 1 and 10 to get started, ' +
+			'or just confirm whether level ' + level + ', a ' + rows + ' by ' +
+			cols + ' board, is ok.'
 	}
 
 	static rulesFaq (contextStr) {

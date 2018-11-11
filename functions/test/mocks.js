@@ -77,8 +77,8 @@ function selectLevelRequest(level) {
   return makeRequest(Requests.LEVEL, levelText);
 }
 
-function guessRequest(row, col) {
-  return makeRequest(Requests.GUESS, [row, col]);
+function guessRequest(coord) {
+  return makeRequest(Requests.GUESS, coord);
 }
 
 function makeRequest(type=null, data=[]) {
@@ -89,18 +89,15 @@ function makeRequest(type=null, data=[]) {
 
   switch (type) {
     case Requests.GUESS:
-      let row = data[0];
-      let col = data[1];
-      params = {'row': row, 'col': col}
+      let coord = data;
+      params = {'coord': coord}
       raw_inputs = 
           [
-            {'query': row, 'input_type': 'VOICE'},
-            {'query': col, 'input_type': 'VOICE'},
+            {'query': coord, 'input_type': 'VOICE'},
           ];
       args = 
           [
-            {'text_value': row, 'raw_text': row, 'name': 'text'},
-            {'text_value': col, 'raw_text': col, 'name': 'text'},
+            {'text_value': coord, 'raw_text': coord, 'name': 'text'},
           ];
       break;
     case Requests.LEVEL:

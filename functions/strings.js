@@ -106,13 +106,13 @@ class Strings {
 		return 'You just guessed that coordinate. ';
 	}
 
-	static alreadyMatchedGuess (row, col, item) {
-		return 'You\'ve already matched this coordinate. ' + row+col +
+	static alreadyMatchedGuess (coord, item) {
+		return 'You\'ve already matched this coordinate. ' + coord +
 			' was a ' + item;
 	}
 
-	static revealPhrase(row, col, item) {
-		return row+col+ ' is a ' + item + '. '
+	static revealPhrase(coord, item) {
+		return coord + ' is a ' + item + '. '
 	}
 
 	static correctMatch () {
@@ -140,6 +140,15 @@ class Strings {
             	return 'There were ' + n + ' incorrect guesses that could ' +
             		'have been correct.';
          }
+	}
+
+	static guessFb1() {
+		return 'Hm, I didn\'t get that. Please guess a letter for the row, ' +
+			'and a number for the column, like "B2".';
+	}
+
+	static guessFb2() {
+		return 'Please guess a letter row and a number column, like "A1"';
 	}
 
 	static endingPhrase(guesses) {

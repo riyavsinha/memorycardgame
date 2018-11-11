@@ -119,7 +119,7 @@ suite( 'Integration Tests', function() {
 })
 
 function performGuess(r, c) {
-  var guess = clone(guessRequest(r, c));
+  var guess = clone(guessRequest(r+c));
   var mockRequest = new MockRequest(headerV1, guess);
   let request = mockRequest;
   let response = mockResponse;

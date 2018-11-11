@@ -2,9 +2,32 @@
 
 //process.env.DEBUG = 'actions-on-google:*';
 const DialogflowApp = require('actions-on-google').DialogflowApp;
-const functions = require('firebase-functions');
+const Logging = require('@google-cloud/logging');
 const Strings = require('./strings.js');
+const functions = require('firebase-functions');
 
+const projectId = 'memory-f8db7';
+const logging = new Logging( {
+  projectId: projectId,
+})
+const log = logging.log(
+  'projects/memory-f8db7/logs/cloudfunctions.googleapis.com%2Fcloud-functions');
+function metadata(fn) {
+  return {
+    labels: {
+      method: fn,
+    },
+    resource: {
+      labels: {
+        function_name:  "memory", 
+        project_id:  "memory-f8db7",
+        region:  "us-central1",
+      },
+      type:  "cloud_function", 
+    },
+    severity:  "DEBUG",
+  }
+}
 
 // Actions in DialogFlow Intents
 const Actions = {
@@ -16,6 +39,8 @@ const Actions = {
   FAQ_PERFECT: 'faq_perfect',
   FAQ_RULES: 'faq_rules',
   GUESS: 'guess',
+  GUESS_FB: 'guess_fb',
+  IMPLICIT_LEVEL_SELECT: 'implicit_level_select',
   LEVEL_SELECT: 'level_select',
   LIST_UNMATCHED: 'list_unmatched',
   PAIRS_LEFT: 'num_pairs_left',
@@ -38,9 +63,8 @@ const Contexts = {
 
 // Params to parse from Intents
 const Params = {
-  COL: 'col',
+  COORD: 'coord',
   LEVEL: 'level',
-  ROW: 'row',
 }
 
 // Game difficulty levels available and corresponding board size.
@@ -103,6 +127,7 @@ class Memory {
   /////////////////////////////////////////////////
 
   [Actions.WELCOME] () {
+
     if (this.hasContext(Contexts.GAME)) {
       this.app.setContext(Contexts.RESTART_YES);
       this.app.setContext(Contexts.RESTART_NO);
@@ -114,12 +139,21 @@ class Memory {
       this.app.ask(Strings.askLevel(
           this.data.level, this.data.numRows, this.data.numCols));
     } else {
+      let entry = log.entry(metadata('resetConnection'), 'resetting . . .');
+      log.write(entry);
+
       this.app.ask(Strings.welcome());
     }
   }
 
   [Actions.LEVEL_SELECT] () {
-    this.data.level = Number(this.app.getArgument(Params.LEVEL));
+    let level = this.app.getArgument(Params.LEVEL);
+
+    // DEBUG: Log raw level choice
+    let entry = log.entry(metadata('levelSelect'), level);
+    log.write(entry);
+
+    this.data.level = Number(level);
     this.data.numRows = Levels[this.data.level][0];
     this.data.numCols = Levels[this.data.level][1];
     this.app.ask(
@@ -194,12 +228,47 @@ class Memory {
     this.app.ask(Strings.startGuessing());
   }
 
-  [Actions.GUESS] () {
-    let rowPrint = this.app.getArgument(Params.ROW).toUpperCase();
-    let colPrint = this.app.getArgument(Params.COL);
+  [Actions.GUESS_FB] () {
+    let guess = this.app.getRawInput();
 
-    let row = this.letterToInt(rowPrint);
-    let col = colPrint - 1;
+    // Debug: log raw guess
+    let entry = log.entry(metadata('invalidGuess'), guess);
+    log.write(entry);
+
+    const phrase = Math.random() > .5 ?
+        Strings.guessFb1() : Strings.guessFb2;
+    this.app.ask(phrase);
+  }
+
+
+  [Actions.GUESS] () {
+    const synonyms = {
+      '81': 'A1',
+      '82': 'A2',
+      '83': 'A3',
+      '84': 'A4',
+      '85': 'A5',
+      'a v': 'A5',
+      '86': 'A6',
+      '87': 'A7',
+      '88': 'A8',
+      '89': 'A9',
+      'big one': 'B1',
+      'before': 'B4',
+    }
+    let coord = this.app.getArgument(Params.COORD);
+
+    // DEBUG: Log raw guess
+    let entry = log.entry(metadata('validGuess'), coord);
+    log.write(entry);
+
+    if (coord in synonyms) {
+      coord = synonyms[coord];
+    } else {
+      coord = coord.charAt(0).toUpperCase() + coord.slice(1);  
+    }
+    let row = this.letterToInt(coord.charAt(0));
+    let col = parseInt(coord.substr(1)) - 1;
 
     /////////////////////////////////////////////////
     // Handle invalid guesses
@@ -213,14 +282,14 @@ class Memory {
 
     let item = this.data.board[row][col];
     let state = this.data.metaboard[row][col];
-    let phrase = Strings.revealPhrase(rowPrint, colPrint, item);
+    let phrase = Strings.revealPhrase(coord, item);
     let firstGuess = this.data.firstGuess;    
 
     // Check if coordinate has been matched already.
     if (state == States.MATCHED) {
       // Penalty guess
       this.data.numGuesses++;
-      this.app.ask(Strings.alreadyMatchedGuess(rowPrint, colPrint, item));
+      this.app.ask(Strings.alreadyMatchedGuess(coord, item));
       return;
     }
 

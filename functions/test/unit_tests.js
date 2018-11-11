@@ -169,7 +169,7 @@ suite( 'UnitTests', function () {
     suite('> Invalid Guesses', function() {
 
       test('Column too high', function() {
-        setupGuessRequest('a', '3')
+        setupGuessRequest('a3')
 
         // Perform action
         board[Actions.GUESS]();
@@ -181,7 +181,7 @@ suite( 'UnitTests', function () {
       })
 
       test('Column too low', function() {
-        setupGuessRequest('a', '0')
+        setupGuessRequest('a0')
 
         // Perform action
         board[Actions.GUESS]();
@@ -193,7 +193,7 @@ suite( 'UnitTests', function () {
       })
 
       test('Row too high', function() {
-        setupGuessRequest('c', '1')
+        setupGuessRequest('c1')
 
         // Perform action
         board[Actions.GUESS]();
@@ -209,7 +209,7 @@ suite( 'UnitTests', function () {
         let row = 'a';
         let col = '1';
 
-        setupGuessRequest(row, col)
+        setupGuessRequest(row+col)
         setMetaboardState(board, row, col, States.MATCHED);
 
         // Check pre board state
@@ -232,7 +232,7 @@ suite( 'UnitTests', function () {
         let row = 'a';
         let col = '1';
 
-        setupGuessRequest(row, col)
+        setupGuessRequest(row+col)
         board.data.firstGuess = {
           row: 0, 
           col: 0,
@@ -266,7 +266,7 @@ suite( 'UnitTests', function () {
         let row = 'c';
         let col = '3';
 
-        setupGuessRequest(row, col)
+        setupGuessRequest(row+col)
 
         // Perform action
         board[Actions.GUESS]();
@@ -280,7 +280,7 @@ suite( 'UnitTests', function () {
         let row = 'c';
         let col = '3';
 
-        setupGuessRequest(row, col)
+        setupGuessRequest(row+col)
         board.data.firstGuess = {
           row: 0,
           col: 0,
@@ -301,7 +301,7 @@ suite( 'UnitTests', function () {
         let row = 'a';
         let col = '1';
 
-        setupGuessRequest(row, col)
+        setupGuessRequest(row+col)
         setMetaboardState(board, row, col, States.MATCHED);
 
         // Perform action
@@ -317,7 +317,7 @@ suite( 'UnitTests', function () {
         let row = 'c';
         let col = '3';
 
-        setupGuessRequest(row, col)
+        setupGuessRequest(row+col)
         board.data.firstGuess = {
           row: 0,
           col: 0,
@@ -339,7 +339,7 @@ suite( 'UnitTests', function () {
         let col = '1';
 
         // Setup board
-        setupGuessRequest(row, col)
+        setupGuessRequest(row+col)
         setMetaboardState(board, row, col, States.MATCHED);
         board.data.firstGuess = {
           row: 0,
@@ -366,7 +366,7 @@ suite( 'UnitTests', function () {
         let col = '1';
 
         // Setup board
-        setupGuessRequest(row, col);
+        setupGuessRequest(row+col);
         setMetaboardState(board, 'a', '1', States.SEEN)
         board.data.firstGuess = {
           row: 0,
@@ -406,7 +406,7 @@ suite( 'UnitTests', function () {
         let col = '1';
 
         // Setup board
-        setupGuessRequest(row, col);
+        setupGuessRequest(row+col);
         setMetaboardState(board, 'a', '1', States.SEEN)
         board.data.firstGuess = {
           row: 0,
@@ -443,7 +443,7 @@ suite( 'UnitTests', function () {
         let col = '1';
 
         // Setup board
-        setupGuessRequest(row, col);
+        setupGuessRequest(row+col);
         setMetaboardState(board, 'a', '1', States.SEEN)
         board.data.firstGuess = {
           row: 0,
@@ -480,7 +480,7 @@ suite( 'UnitTests', function () {
         let col = '1';
 
         // Setup board
-        setupGuessRequest(row, col);
+        setupGuessRequest(row+col);
         board.data.firstGuess = {
           row: 0,
           col: 1,
@@ -532,7 +532,7 @@ suite( 'UnitTests', function () {
         row = 'a';
         col = '1';
 
-        setupGuessRequest(row, col);
+        setupGuessRequest(row+col);
         board.data.firstGuess = {
           row: 1,
           col: 0,
@@ -833,7 +833,7 @@ suite( 'UnitTests', function () {
         let col = '1';
 
         // Setup board
-        setupGuessRequest(row, col);
+        setupGuessRequest(row+col);
         setMetaboardState(board, 'a', '1', States.SEEN)
         board.data.pairsLeft = 1;
         board.data.firstGuess = {
@@ -859,7 +859,7 @@ suite( 'UnitTests', function () {
         let col = '1';
 
         // Setup board
-        setupGuessRequest(row, col);
+        setupGuessRequest(row+col);
         setMetaboardState(board, 'a', '1', States.SEEN)
         board.data.pairsLeft = 1;
         board.data.numLucky = 1;
@@ -886,7 +886,7 @@ suite( 'UnitTests', function () {
         let col = '1';
 
         // Setup board
-        setupGuessRequest(row, col);
+        setupGuessRequest(row+col);
         setMetaboardState(board, 'a', '1', States.SEEN)
         board.data.pairsLeft = 1;
         board.data.numPerfect = 1;
@@ -914,7 +914,7 @@ suite( 'UnitTests', function () {
         let col = '1';
 
         // Setup board
-        setupGuessRequest(row, col);
+        setupGuessRequest(row+col);
         setMetaboardState(board, 'a', '1', States.SEEN)
         board.data.pairsLeft = 1;
         board.data.numPerfect = 1;
@@ -943,7 +943,7 @@ suite( 'UnitTests', function () {
         let col = '1';
 
         // Setup board
-        setupGuessRequest(row, col);
+        setupGuessRequest(row+col);
         board.data.pairsLeft = 1;
         board.data.firstGuess = {
           row: 0,
@@ -968,7 +968,7 @@ suite( 'UnitTests', function () {
         let col = '1';
 
         // Setup board
-        setupGuessRequest(row, col);
+        setupGuessRequest(row+col);
         board.data.pairsLeft = 1;
         board.data.numLucky = 1;
         board.data.firstGuess = {
@@ -994,7 +994,7 @@ suite( 'UnitTests', function () {
         let col = '1';
 
         // Setup board
-        setupGuessRequest(row, col);
+        setupGuessRequest(row+col);
         setMetaboardState(board, 'a', '1', States.SEEN)
         board.data.pairsLeft = 1;
         board.data.firstGuess = {
@@ -1041,7 +1041,7 @@ suite( 'UnitTests', function () {
         let col = '1';
 
         // Setup board
-        setupGuessRequest(row, col);
+        setupGuessRequest(row+col);
 
         // Check pre state
         assert.equal(States.UNKNOWN, getMetaboardState(board, row, col))
@@ -1060,11 +1060,10 @@ suite( 'UnitTests', function () {
 
       test('A first guess is saved for future guess', function() {
         // Set guess coordinates
-        let row = 'a';
-        let col = '1';
+        let coord = 'a1'
 
         // Setup board
-        setupGuessRequest(row, col);
+        setupGuessRequest(coord);
 
         // Perform action
         board[Actions.GUESS]();
@@ -1097,9 +1096,9 @@ function setupBoard(b) {
   b.data.numGuesses = 0;
 }
 
-function setupGuessRequest(r, c) {
+function setupGuessRequest(coord) {
     // Setup board
-    guess = clone(guessRequest(r, c));
+    guess = clone(guessRequest(coord));
     mockRequest = new MockRequest(headerV1, guess);
     board = new Memory(mockRequest, mockResponse);
     setupBoard(board);

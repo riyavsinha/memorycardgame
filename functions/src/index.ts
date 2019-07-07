@@ -258,7 +258,7 @@ app.intent(Actions.GUESS, (conv, {coord}) => {
 });
 
 app.intent(Actions.GUESS_FB, conv => {
-  const guess = conv.query;
+  // const guess = conv.query;
 
   // Debug: log raw guess
   // let entry = log.entry(metadata('invalidGuess'), guess);

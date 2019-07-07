@@ -243,6 +243,7 @@ class Memory {
 
   [Actions.GUESS] () {
     const synonyms = {
+      'v': '5',
       '81': 'A1',
       '82': 'A2',
       '83': 'A3',
